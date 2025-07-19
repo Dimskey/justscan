@@ -24,10 +24,17 @@ const Dashboard = () => {
     setLoading(true)
     setError(null)
     try {
+      console.log('Fetching projects from API...', import.meta.env.VITE_API_URL)
       const res = await projectAPI.getProjects()
-      setProjects(res.data)
+      console.log('Projects response:', res)
+      // Ensure we have an array
+      const projectsData = Array.isArray(res.data) ? res.data : []
+      setProjects(projectsData)
     } catch (err) {
-      setError(apiUtils.handleError(err).message)
+      console.error('API Error:', err)
+      const errorMessage = apiUtils.handleError(err).message
+      console.error('Formatted error:', errorMessage)
+      setError(errorMessage)
     }
     setLoading(false)
   }
@@ -126,11 +133,11 @@ const Dashboard = () => {
           <div className="text-gray-400">Loading projects...</div>
         ) : error ? (
           <div className="text-red-400">{error}</div>
-        ) : projects.length === 0 ? (
+        ) : (!Array.isArray(projects) || projects.length === 0) ? (
           <div className="text-gray-400">No projects found.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {projects.map(project => (
+            {Array.isArray(projects) && projects.map(project => (
               <div key={project.id} className="bg-gray-800 rounded-lg border border-gray-700 p-4 flex flex-col gap-2">
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-white">{project.name}</h3>
