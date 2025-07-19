@@ -4,7 +4,7 @@ import os
 import json
 
 class Settings(BaseSettings):
-    # Database
+    # Database - Fallback to SQLite if no PostgreSQL
     DATABASE_URL: str = "sqlite:///./justsploit.db"
     
     # Security
@@ -65,6 +65,14 @@ class Settings(BaseSettings):
             # If string, split by comma
             return [origin.strip() for origin in self.BACKEND_CORS_ORIGINS.split(",")]
         return self.BACKEND_CORS_ORIGINS
+    
+    @property 
+    def database_url(self) -> str:
+        """Get validated database URL"""
+        if not self.DATABASE_URL or self.DATABASE_URL.strip() == "":
+            print("WARNING: DATABASE_URL is empty, using SQLite fallback")
+            return "sqlite:///./justsploit.db"
+        return self.DATABASE_URL
 
 # Create settings instance
 settings = Settings()

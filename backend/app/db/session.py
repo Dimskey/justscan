@@ -4,10 +4,10 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from app.core.config import settings
 
-# Create database engine
+# Create database engine with validation
 engine = create_engine(
-    settings.DATABASE_URL,
-    connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
+    settings.database_url,
+    connect_args={"check_same_thread": False} if "sqlite" in settings.database_url else {}
 )
 
 # Create session factory
