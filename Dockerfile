@@ -14,6 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
+# Copy start script
+COPY start.py ./start.py
+
 # Copy backend directory first
 COPY backend/ ./
 
@@ -26,5 +29,5 @@ RUN mkdir -p logs uploads
 # Expose port 8000 (hardcoded for Railway)
 EXPOSE 8000
 
-# Initialize database and start app - hardcoded port
-CMD python -c "import app.models; from app.db.session import engine; from app.models.base import Base; Base.metadata.create_all(bind=engine); print('Database initialized')" && uvicorn app.main:app --host 0.0.0.0 --port 8000
+# Use start script
+CMD ["python", "start.py"]
