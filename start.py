@@ -1,42 +1,39 @@
-#!/usr/bin/env python3
-"""
-Start script for Railway deployment
-Handles PORT environment variable and database initialization
-"""
 import os
-import subprocess
 import sys
 
 def main():
-    # Get port from environment with fallback
-    port = os.getenv('PORT', '8000')
-    print(f"Railway assigned PORT: {port}")
+    # Get PORT from Railway environment
+    port = os.environ.get('PORT', '8000')
+    print(f"Starting on port: {port}")
+    
+    # Validate port is numeric
+    try:
+        port_num = int(port)
+        print(f"Port validated: {port_num}")
+    except ValueError:
+        print(f"Invalid PORT value: {port}, using 8000")
+        port_num = 8000
     
     # Initialize database
     try:
-        print("Initializing database...")
+        print("Setting up database...")
         import app.models
         from app.db.session import engine
         from app.models.base import Base
-        
         Base.metadata.create_all(bind=engine)
-        print("✅ Database tables created successfully")
+        print("Database ready")
     except Exception as e:
-        print(f"⚠️ Database initialization failed: {e}")
-        print("Continuing without database initialization...")
+        print(f"Database setup failed: {e}")
     
-    # Start uvicorn
-    print(f"🚀 Starting uvicorn on 0.0.0.0:{port}")
-    try:
-        subprocess.run([
-            'uvicorn', 
-            'app.main:app', 
-            '--host', '0.0.0.0', 
-            '--port', str(port)
-        ], check=True)
-    except Exception as e:
-        print(f"❌ Failed to start uvicorn: {e}")
-        sys.exit(1)
+    # Start server
+    print(f"Starting uvicorn on 0.0.0.0:{port_num}")
+    import uvicorn
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0", 
+        port=port_num,
+        log_level="info"
+    )
 
 if __name__ == "__main__":
     main()
