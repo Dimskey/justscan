@@ -85,6 +85,7 @@ export const aiAPI = {
   chat: (message, context, projectId) => api.post('/ai/chat', { message, context, project_id: projectId }),
   getChatHistory: (projectId, limit) => api.get(`/ai/chat/history/${projectId}`, { params: { limit } }),
   analyzeScanResults: (scanData, projectId) => api.post('/ai/analyze/scan', { scan_data: scanData, project_id: projectId }),
+  analyzeWithReplicate: (text) => api.post('/ai/analyze_replicate', { text }),
   suggestExploits: (targetInfo, projectId) => api.post('/ai/suggest/exploits', { target_info: targetInfo, project_id: projectId }),
   generateReport: (projectId, reportType) => api.post('/ai/generate/report', { project_id: projectId, report_type: reportType }),
 }

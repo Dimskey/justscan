@@ -20,9 +20,19 @@ class AnalyzeRequest(BaseModel):
 def analyze_text_replicate(req: AnalyzeRequest):
     try:
         # Check if API token is available
-        if not REPLICATE_API_TOKEN:
-            logger.error("REPLICATE_API_TOKEN not found in environment variables")
-            raise HTTPException(status_code=500, detail="AI service not configured")
+        if not REPLICATE_API_TOKEN or REPLICATE_API_TOKEN == "your_token_if_you_have":
+            logger.warning("REPLICATE_API_TOKEN not configured, returning mock response")
+            return {
+                "result": "🤖 AI Analysis (Demo Mode)\n\n"
+                "**Security Assessment:**\n"
+                "• This is a demonstration response\n"
+                "• Configure REPLICATE_API_TOKEN for real AI analysis\n"
+                "• AI would normally analyze scan results for vulnerabilities\n\n"
+                "**Mock Findings:**\n"
+                "• Open ports detected - Review necessity\n"
+                "• HTTP services found - Check for proper security headers\n"
+                "• Recommendation: Enable proper monitoring and access controls"
+            }
         
         # Prompt yang lebih terstruktur dan relevan
         user_input = req.text

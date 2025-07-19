@@ -28,11 +28,11 @@ async def startup_event():
         print(f"Warning: Database initialization failed: {e}")
         print("Application will continue without database...")
 
-# CORS middleware
+# CORS middleware - Allow all origins for now to debug
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins,
-    allow_credentials=True,
+    allow_origins=["*"],  # Temporarily allow all origins
+    allow_credentials=False,  # Set to False when using wildcard
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
+import { aiAPI, apiUtils } from '../services/api';
 
 const Assistant = () => {
   const [message, setMessage] = useState('');
@@ -15,21 +16,11 @@ const Assistant = () => {
       
       try {
         console.log('Sending message to AI:', userMessage);
-        const res = await fetch('/api/ai/analyze_replicate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: userMessage })
-        });
+        console.log('API Base URL:', import.meta.env.VITE_API_URL);
+        const res = await aiAPI.analyzeWithReplicate(userMessage);
+        console.log('AI Response:', res);
         
-        console.log('Response status:', res.status);
-        
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.error('AI API error:', res.status, errorText);
-          throw new Error(`AI service error (${res.status}): ${errorText}`);
-        }
-        
-        const data = await res.json();
+        const data = res.data;
         console.log('AI response data:', data);
         
         const aiResponse = data.result || data.output || 'No response from AI.';
@@ -39,9 +30,10 @@ const Assistant = () => {
         ]);
       } catch (err) {
         console.error('Error in AI chat:', err);
+        const errorMessage = apiUtils.handleError(err).message;
         setChatHistory(history => [
           ...history,
-          { type: 'ai', content: `Error: ${err.message}` }
+          { type: 'ai', content: `Error: ${errorMessage}` }
         ]);
       } finally {
         setIsLoading(false);
