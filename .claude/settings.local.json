@@ -16,7 +16,9 @@
       "Bash(docker-compose logs:*)",
       "Bash(docker-compose:*)",
       "Bash(docker-compose up:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c:*)"
     ],
     "deny": []
   }
