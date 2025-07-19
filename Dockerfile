@@ -1,4 +1,4 @@
-# Railway-optimized Dockerfile
+# Railway-optimized Dockerfile - Fixed PORT issue
 FROM python:3.11-slim
 
 # Set working directory
@@ -12,14 +12,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Set environment variables
 ENV PYTHONPATH=/app
-ENV PORT=8000
 ENV PYTHONUNBUFFERED=1
 
-# Copy start script
-COPY start.sh ./start.sh
-RUN chmod +x start.sh
-
-# Copy backend directory first to use Docker layer caching
+# Copy backend directory first
 COPY backend/ ./
 
 # Install Python dependencies
@@ -28,12 +23,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Create necessary directories
 RUN mkdir -p logs uploads
 
-# Expose port
-EXPOSE $PORT
+# Expose port 8000 (hardcoded for Railway)
+EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
-
-# Run the application using start script
-CMD ["./start.sh"]
+# Initialize database and start app - hardcoded port
+CMD python -c "import app.models; from app.db.session import engine; from app.models.base import Base; Base.metadata.create_all(bind=engine); print('Database initialized')" && uvicorn app.main:app --host 0.0.0.0 --port 8000
