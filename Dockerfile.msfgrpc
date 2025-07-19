@@ -1,0 +1,27 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y git curl gnupg2 postgresql ruby ruby-dev make g++ zlib1g-dev libxml2-dev libxslt1-dev libyaml-dev libsqlite3-dev sqlite3 autoconf bison libgmp-dev libpcap-dev libffi-dev libreadline-dev libssl-dev libpq-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install bundler
+RUN gem install bundler
+
+# Clone Metasploit Framework
+RUN git clone https://github.com/rapid7/metasploit-framework.git /opt/metasploit-framework
+WORKDIR /opt/metasploit-framework
+
+# Install Ruby gems
+RUN bundle install
+
+# Symlink msfconsole
+RUN ln -s /opt/metasploit-framework/msfconsole /usr/local/bin/msfconsole
+
+# Expose RPC port
+EXPOSE 55553
+
+# Jalankan msfconsole dengan modul msgrpc (RPC XML)
+CMD msfconsole -q -x "load msgrpc ServerHost=0.0.0.0 ServerPort=55553 User=msf Pass=scriptkiddie; sleep infinity" 

@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(./activate)",
+      "Bash(pip install:*)",
+      "Bash(source:*)",
+      "Bash(venv\\Scripts\\activate.bat:*)",
+      "Bash(./venv/Scripts/activate)",
+      "Bash(venv/Scripts/python.exe:*)",
+      "Bash(venv311/Scripts/python.exe:*)",
+      "Bash(ls:*)",
+      "Bash(npm run:*)",
+      "Bash(curl:*)",
+      "Bash(rm:*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(docker-compose:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(find:*)"
+    ],
+    "deny": []
+  }
+}
