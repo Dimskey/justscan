@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
-from typing import Optional, List
+from typing import Optional, List, Union
 import os
+import json
 
 class Settings(BaseSettings):
     # Database
@@ -15,14 +16,14 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api"
     PROJECT_NAME: str = "JustSploit"
     
-    # CORS
-    BACKEND_CORS_ORIGINS: List[str] = [
+    # CORS - Support both JSON array and comma-separated string
+    BACKEND_CORS_ORIGINS: Union[List[str], str] = [
         "http://localhost:3000",
         "http://localhost:5173",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
         "https://*.vercel.app",
-        "https://*.fly.dev"
+        "https://*.railway.app"
     ]
     
     # Metasploit Configuration
@@ -56,6 +57,14 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = True
+    
+    @property
+    def cors_origins(self) -> List[str]:
+        """Parse CORS origins from environment variable"""
+        if isinstance(self.BACKEND_CORS_ORIGINS, str):
+            # If string, split by comma
+            return [origin.strip() for origin in self.BACKEND_CORS_ORIGINS.split(",")]
+        return self.BACKEND_CORS_ORIGINS
 
 # Create settings instance
 settings = Settings()
